@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Aeon_Citadel import views
+from Aeon_Account import views as account
+from Aeon_Avatar import views as avatar
+from Aeon_Citadel import views as citadel
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login/', views.login),
+    path('login/', account.login),
+    path('logout/', account.logout),
+    path('register/', account.register),
+    path('createHero/', avatar.create_avatar),
+    path('loadAllHero/', avatar.load_all_avatars),
+    path('selectHero/', avatar.select_hero),
+    path('takeAction/', citadel.execute_action),
 ]

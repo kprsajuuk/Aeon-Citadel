@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Aeon_Account.apps.AeonAccountConfig',
+    'Aeon_Avatar.apps.AeonAvatarConfig',
     'Aeon_Citadel.apps.AeonCitadelConfig',
     'corsheaders',
 ]
@@ -50,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Aeon_Global.aeon_middleware.AeonGlobalMiddleware',
 ]
 
 ROOT_URLCONF = 'Aeon.urls'
@@ -156,3 +161,7 @@ CORS_ALLOW_CREDENTIALS = True
 # 允许所有主机执行跨站点请求，默认为False
 # 如果没设置该参数，则必须设置白名单，运行部分白名单的主机才能执行跨站点请求
 CORS_ORIGIN_ALLOW_ALL = True
+
+# session 设置
+SESSION_COOKIE_AGE = 60 * 1440  # 设置过期时间，默认为两周
+SESSION_SAVE_EVERY_REQUEST = True
