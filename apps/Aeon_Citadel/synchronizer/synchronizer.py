@@ -1,11 +1,14 @@
 def sync_check(event, action):
     if action == 'requestLatest':
         return True
+    name = event['name']
     legal_actions = set([])
-    if event is None:
+    if event is None or event == '' or name == 'default':
         legal_actions = set(['newroom'])
-    elif event['name'] == 'enemy':
-        legal_actions = set(['attack', 'withdraw', 'struggle'])
+    elif name == 'enemy':
+        legal_actions = set(['attack', 'dodge', 'charge'])
+    elif name == 'win':
+        legal_actions = set(['newroom'])
 
     if action in legal_actions:
         return True

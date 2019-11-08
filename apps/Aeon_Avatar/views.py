@@ -5,6 +5,7 @@ from . import forms
 from .models import Avatar
 from Aeon_Citadel.models import Journey
 import uuid
+import json
 
 
 @csrf_exempt
@@ -23,10 +24,12 @@ def create_avatar(request):
             magic = avatar_form.cleaned_data['magic']
             comment = avatar_form.cleaned_data['comment']
             avatar_id = uuid.uuid1()
+            status = {"name": name, "hp": 100, "max_hp": 100, "attack": 50, "exp": 0, "lv": 1, "speed": speed}
+            status = json.dumps(status)
             new_avatar = Avatar.objects.create(avatar_id=avatar_id, user_id=user_id, name=name, attack=attack,
                                                defense=defense, speed=speed, range=a_range, magic=magic,
                                                comment=comment)
-            new_journey = Journey.objects.create(avatar_id=avatar_id, avatar_name=name)
+            new_journey = Journey.objects.create(avatar_id=avatar_id, avatar_name=name, avatar_status=status)
             new_avatar.save()
             new_journey.save()
             success = True
@@ -52,8 +55,9 @@ def load_all_avatars(request):
 def select_hero(request):
     if request.method == 'POST':
         avatar = request.POST['selectChar']
-        query = Avatar.objects.values('user_id').filter(id=avatar)[0]
-        if query['user_id'] == request.session.get('user_id', None):
+        query = Avatar.objects.values('user_id').filter(avatar_id=avatar)[0]
+        if query['user_id'] == str(request.session.get('user_id', None)):
             request.session['selectChar'] = avatar
-
-        return JsonResponse({"success": True, "msg": "something"})
+            return JsonResponse({"success": True, "msg": "something"})
+        else:
+            return JsonResponse({"success": False, "msg": "error"})

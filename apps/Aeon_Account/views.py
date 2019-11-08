@@ -21,14 +21,13 @@ def login(request):
                 user = models.User.objects.get(name=username)
                 if user.password == md5_password(password):
                     request.session['is_login'] = True
-                    request.session['user_id'] = user.id
+                    request.session['user_id'] = str(user.id)
                     request.session['user_name'] = user.name
                     success = True
                     message = "登陆成功"
                 else:
                     message = "密码错误"
-            except Exception as e:
-                print(e)
+            except Exception:
                 message = "用户不存在"
                 pass
     return JsonResponse({"success": success, "msg": message})
