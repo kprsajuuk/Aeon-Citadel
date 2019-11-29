@@ -24,7 +24,8 @@ def create_avatar(request):
             magic = avatar_form.cleaned_data['magic']
             comment = avatar_form.cleaned_data['comment']
             avatar_id = uuid.uuid1()
-            status = {"name": name, "hp": 100, "max_hp": 100, "attack": 50, "exp": 0, "lv": 1, "speed": speed}
+            status = {"name": name, "hp": 100, "max_hp": 100, "attack": 50, "exp": 0, "lv": 1, "speed": speed,
+                      "max_stamina": 2, "stamina": 2, "charge": 0}
             status = json.dumps(status)
             new_avatar = Avatar.objects.create(avatar_id=avatar_id, user_id=user_id, name=name, attack=attack,
                                                defense=defense, speed=speed, range=a_range, magic=magic,

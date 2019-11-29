@@ -65,10 +65,10 @@ def register(request):
 def logout(request):
     if not request.session.get('is_login', None):
         return JsonResponse({"success": False, "msg": '并未登录'})
-    #del request.session['is_login']
-    #del request.session['user_id']
-    #del request.session['user_name']
-    #del request.session['event']
+    # del request.session['is_login']
+    # del request.session['user_id']
+    # del request.session['user_name']
+    # del request.session['event']
     request.session.flush()
     return JsonResponse({"success": True, "msg": '成功退出登录'})
 
