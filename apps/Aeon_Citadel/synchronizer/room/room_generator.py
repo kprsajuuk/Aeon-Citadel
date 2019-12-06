@@ -1,3 +1,5 @@
+import random
+
 
 def generate_map(dif):
     level_map = [
@@ -11,8 +13,14 @@ def generate_map(dif):
     return room_num, level_map
 
 
-def generate_room(room_level, room_user):
+def leave_room(direction, map_level, map_user):
+    pass
+
+
+def enter_room(room_num, map_level, map_user):
     dif = 10
+    room_level = map_level[room_num]
+    room_user = map_user['rooms'][room_num]
     events = room_level.get('events', [])
     if room_user.get('new', True):
         if events:
@@ -20,19 +28,40 @@ def generate_room(room_level, room_user):
         else:
             return [random_event(dif)]
     else:
-        return [{'status': 'end'}]
+        if events:
+            events.insert(0, {'status': 'end'})
+            return events
+
+    return [{'status': 'end'}]
 
 
 def random_event(dif):
-    type_list = ['enemy', 'treasure', 'incident']
-    import random
-    event = type_list[random.randint(0, 2)]
+    type_list = [{'type': 'enemy', 'weight': 1},
+                 {'type': 'treasure', 'weight': 1},
+                 {'type': 'incident', 'weight': 1},
+                 {'type': 'nothing', 'weight': 2}]
+    total_weight = 0
+    for item in type_list:
+        total_weight += item['weight']
+        item['bound'] = total_weight
+    if total_weight < 1:
+        return
+    rand = random.randint(1, total_weight)
+    lower = 0
+    for item in type_list:
+        upper = item['bound']
+        if lower < rand <= upper:
+            event = item['type']
+            break
+        lower = upper
     if event == 'enemy':
         return generate_enemy(dif)
     elif event == 'treasure':
-        return generate_option(dif)
+        return generate_treasure(dif)
     elif event == 'incident':
         return generate_effect(dif)
+    elif event == 'nothing':
+        return {"type": "message", "content": {"name": "message", "msg": "安全的房间"}}
 
 
 def generate_enemy(dif):
@@ -55,29 +84,37 @@ def generate_enemy(dif):
     }
 
 
-def generate_option(dif):
+def generate_treasure(dif):
+    result = random_effect(dif)
     return {
         "type": "option",
         "content": {
             "name": "option",
             "msg": "你遇到一个宝箱，要怎么办呢(问号)",
             "options": [{"key": "a", "describe": "打开它"},
-                        {"key": "b", "describe": "劈烂它"}]
+                        {"key": "b", "describe": "不管它"}]
         },
         "legalKeys": ["a", "b"],
         "result": {
-            "a": {"name": "heal", "point": 5, "msg": "恢复了5点生命值"},
-            "b": {"name": "damage", "point": 5, "msg": "受到5点伤害"},
+            "a": result,
+            "b": {},
         }
     }
 
 
 def generate_effect(dif):
+    result = random_effect(dif)
     return {
         "type": "message",
         "content": {
             "name": "message",
             "msg": "发生了意想不到的事情!",
         },
-        "result": {"name": "damage", "point": 5, "msg": "受到5点伤害"},
+        "result": result,
     }
+
+
+def random_effect(dif):
+    effect_list = [{"name": "damage", "point": 5, "msg": "受到5点伤害"},
+                   {"name": "heal", "point": 5, "msg": "恢复了5点生命值"}]
+    return effect_list[random.randint(0, 1)]

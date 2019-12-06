@@ -11,14 +11,17 @@ class OptionHandler:
 
     def handle_event(self, avatar_act):
         result = self.options.get(avatar_act, {})
+        new_event = self.event
         user_avatar = UserAvatar(avatar_act, self.avatar)
         if result == {}:
-            new_event = message_event('nothing happended')
+            new_event['status'] = 'standby'
+            new_event['next'] = message_event('无事发生')
         else:
             effect = Effect(result, user_avatar)
             effect.execute_effect()
             message = effect.get_info()
-            new_event = message_event(message)
+            new_event['status'] = 'end'
+            new_event['next'] = message_event(message)
         new_avatar = user_avatar.get_avatar()
         return new_event, new_avatar
 

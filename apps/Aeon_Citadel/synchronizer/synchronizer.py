@@ -7,7 +7,7 @@ def sync_check(event, action):
     if event_type == 'start':
         legal_actions = set(['start'])
     elif event_type == 'move':
-        legal_actions = set(['t', 'r', 'b', 'l'])
+        legal_actions = set(['t', 'r', 'b', 'l', 'act'])
     elif event_type == 'enemy':
         legal_actions = set(['attack', 'dodge', 'charge'])
     elif event_type == 'message':

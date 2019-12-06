@@ -28,4 +28,6 @@ urlpatterns = [
     path('loadAllHero/', avatar.load_all_avatars),
     path('selectHero/', avatar.select_hero),
     path('takeAction/', citadel.execute_action),
+
+    path('test/', citadel.test_func),
 ]

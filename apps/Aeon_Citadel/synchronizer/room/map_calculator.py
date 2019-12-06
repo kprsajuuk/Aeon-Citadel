@@ -4,7 +4,7 @@ def get_map_dimension(map_arr):
     return coor[0], coor[1]
 
 
-def next_room(direction, map_user, map_level):
+def next_room(direction, map_level, map_user):
     row, col = get_map_dimension(map_user)
     rooms = map_user.get('rooms', [])
     room = rooms[map_user['user']]
@@ -22,8 +22,7 @@ def next_room(direction, map_user, map_level):
         elif direction == 'l':
             coor[1] = coor[1] - 1
         index = row*(coor[0]-1)+coor[1]-1
-        new_room = map_level[index]
-        rooms[index]['path'] = new_room['path']
+        rooms[index]['path'] = map_level[index]['path']
         if not rooms[index]['show']:
             rooms[index]['show'] = True
             rooms[index]['new'] = True
@@ -31,6 +30,6 @@ def next_room(direction, map_user, map_level):
             rooms[index]['new'] = False
         rooms[index]['user'] = True
         map_user['user'] = index
-        return new_room, map_user
+        return map_user
     else:
         return False
