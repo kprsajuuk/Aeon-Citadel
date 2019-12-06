@@ -8,8 +8,6 @@ class Avatar(models.Model):
     attack = models.CharField(max_length=128, default="0")
     defense = models.CharField(max_length=128, default="0")
     speed = models.CharField(max_length=128, default="0")
-    range = models.CharField(max_length=128, default="0")
-    magic = models.CharField(max_length=128, default="0")
     comment = models.TextField(default="")
     c_time = models.DateTimeField(auto_now_add=True)
 

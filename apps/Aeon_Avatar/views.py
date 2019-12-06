@@ -4,6 +4,7 @@ from django.forms.models import model_to_dict
 from . import forms
 from .models import Avatar
 from Aeon_Citadel.models import Journey
+from .validator.validator import init_avatar
 import uuid
 import json
 
@@ -20,16 +21,15 @@ def create_avatar(request):
             attack = avatar_form.cleaned_data['attack']
             defense = avatar_form.cleaned_data['defense']
             speed = avatar_form.cleaned_data['speed']
-            a_range = avatar_form.cleaned_data['range']
-            magic = avatar_form.cleaned_data['magic']
             comment = avatar_form.cleaned_data['comment']
+            if not init_avatar({'atk': attack, 'def': defense, 'spe': speed}):
+                return JsonResponse({"success": False, "msg": "输入的技能点有误"})
             avatar_id = uuid.uuid1()
-            status = {"name": name, "hp": 100, "max_hp": 100, "attack": 50, "exp": 0, "lv": 1, "speed": speed,
-                      "max_stamina": 2, "stamina": 2, "charge": 0}
+            status = {"name": name, "hp": int(defense)*5, "max_hp": int(defense)*5, "attack": attack, "exp": 0, "lv": 1,
+                      "max_stamina": speed, "stamina": speed, "charge": 0}
             status = json.dumps(status)
             new_avatar = Avatar.objects.create(avatar_id=avatar_id, user_id=user_id, name=name, attack=attack,
-                                               defense=defense, speed=speed, range=a_range, magic=magic,
-                                               comment=comment)
+                                               defense=defense, speed=speed,comment=comment)
             new_journey = Journey.objects.create(avatar_id=avatar_id, avatar_name=name, avatar_status=status)
             new_avatar.save()
             new_journey.save()

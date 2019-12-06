@@ -18,7 +18,7 @@ def leave_room(direction, map_level, map_user):
 
 
 def enter_room(room_num, map_level, map_user):
-    dif = 10
+    dif = 1
     room_level = map_level[room_num]
     room_user = map_user['rooms'][room_num]
     events = room_level.get('events', [])
@@ -36,10 +36,10 @@ def enter_room(room_num, map_level, map_user):
 
 
 def random_event(dif):
-    type_list = [{'type': 'enemy', 'weight': 1},
+    type_list = [{'type': 'enemy', 'weight': 2},
                  {'type': 'treasure', 'weight': 1},
                  {'type': 'incident', 'weight': 1},
-                 {'type': 'nothing', 'weight': 2}]
+                 {'type': 'nothing', 'weight': 3}]
     total_weight = 0
     for item in type_list:
         total_weight += item['weight']
@@ -72,12 +72,12 @@ def generate_enemy(dif):
             "enemy": {
                 "name": "MuyiShen1",
                 "lv": 1,
-                "hp": (int(dif) + 1) * 5,
-                "max_hp": (int(dif) + 1) * 5,
+                "hp": (int(dif) + 2) * 5,
+                "max_hp": (int(dif) + 2) * 5,
                 "stamina": 2,
                 "max_stamina": 2,
                 "charge": 0,
-                "attack": int(dif) + 1
+                "attack": int(dif) + 2
             }
         },
         "result": {}
