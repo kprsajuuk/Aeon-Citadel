@@ -22,14 +22,16 @@ def create_avatar(request):
             defense = avatar_form.cleaned_data['defense']
             speed = avatar_form.cleaned_data['speed']
             comment = avatar_form.cleaned_data['comment']
-            if not init_avatar({'atk': attack, 'def': defense, 'spe': speed}):
+            skill_points = init_avatar({'atk': attack, 'def': defense, 'spe': speed})
+            if skill_points < 0:
                 return JsonResponse({"success": False, "msg": "输入的技能点有误"})
             avatar_id = uuid.uuid1()
-            status = {"name": name, "hp": int(defense)*5, "max_hp": int(defense)*5, "attack": attack, "exp": 0, "lv": 1,
-                      "max_stamina": speed, "stamina": speed, "charge": 0}
+            status = {"name": name, "hp": int(defense)*5, "max_hp": int(defense)*5, "defense": defense,
+                      "attack": attack, "speed": speed, "exp": 0, "lv": 1, "max_stamina": speed, "stamina": speed,
+                      "charge": 0, "skill_points": skill_points}
             status = json.dumps(status)
             new_avatar = Avatar.objects.create(avatar_id=avatar_id, user_id=user_id, name=name, attack=attack,
-                                               defense=defense, speed=speed,comment=comment)
+                                               defense=defense, speed=speed, comment=comment)
             new_journey = Journey.objects.create(avatar_id=avatar_id, avatar_name=name, avatar_status=status)
             new_avatar.save()
             new_journey.save()
@@ -37,6 +39,24 @@ def create_avatar(request):
             msg = "创建成功"
         else:
             print(avatar_form.errors)
+    return JsonResponse({"success": success, "msg": msg})
+
+
+@csrf_exempt
+def delete_avatar(request):
+    success = False
+    msg = ""
+    if request.method == 'POST':
+        avatar_id = request.POST['avatarId']
+        avatar = Avatar.objects.filter(avatar_id=avatar_id)
+        journey = Journey.objects.filter(avatar_id=avatar_id)
+        if avatar and journey:
+            Avatar.objects.filter(avatar_id=avatar_id).delete()
+            Journey.objects.filter(avatar_id=avatar_id).delete()
+            success = True
+            msg = "删除成功"
+        else:
+            msg = "未找到该角色"
     return JsonResponse({"success": success, "msg": msg})
 
 

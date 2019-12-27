@@ -19,10 +19,9 @@ class ActionHandler:
     def handle_journey(self):
         self.get_journey()
         data = self.get_journey_detail(['avatar_status', 'difficulty'])
-        avatar = data.get('avatar_status', False)
+        avatar = data.get('avatar_status', {})
         difficulty = data.get('difficulty', 10)
-        if not avatar:
-            return False, False
+        avatar['description'] = ""
         success, data = self.handle_action(avatar, difficulty)
         self.update_journey()
         return success, data
@@ -38,19 +37,19 @@ class ActionHandler:
             try:
                 data = eval(self.journey[field])
             except Exception:
-                data = ''
+                data = self.journey[field]
             data_obj[field] = data
         return data_obj
 
     def handle_action(self, avatar, dif):
         data = self.get_journey_detail(['event_current', 'event_queue'])
-        event = data.get('event_current', '')
+        event = data.get('event_current', {})
         event_que = data.get('event_queue', [])
 
         if not sync_check(event, self.avatar_action):
             return False, False
 
-        if event == '':
+        if event == {}:
             if not event_que:
                 event = {'type': 'start', 'content': {'name': 'start'}}
             else:
@@ -62,7 +61,7 @@ class ActionHandler:
             return True, result
 
         if event['type'] == 'start':
-            room_number, map_level = generate_map(10)
+            room_number, map_level = generate_map(dif)
             room_user = map_level[room_number]
             room_user['user'] = True
             room_user['show'] = True
@@ -75,6 +74,8 @@ class ActionHandler:
             self.new_journey['map_user'] = map_user
             event = {'type': 'move', 'content': {'name': 'move', 'path': room_user.get('path', [])}}
             result['map'] = map_user
+        elif event['type'] == 'journey_end':
+            return True, result
         elif event['type'] == 'move':
             data = self.get_journey_detail(['map_level', 'map_user'])
             map_level = data['map_level']
@@ -119,12 +120,21 @@ class ActionHandler:
         self.new_journey['event_queue'] = event_que
         self.new_journey['avatar_status'] = avatar
 
+        if avatar.get('hp', 0) <= 0:
+            avatar['status'] = 'death'
+            event['status'] = 'end'
+            event['type'] = 'pass'
+            event['next'] = {
+                "type": "journey_end",
+                "journey": "lost",
+                "content": {"name": "journey_end", "journey": "lost"},
+            }
         result['event'] = event.get('content', {})
         result['hero'] = avatar
         return True, result
 
     def after_event(self, event, event_que):
-        status = event.get('status', '')
+        status = event.get('status', {})
         if status != 'end' and status != 'standby':
             return event, event_que
 
@@ -133,7 +143,7 @@ class ActionHandler:
         if event.get('next', {}) != {}:
             new_event = event['next']
             del event['next']
-        elif len(event_que) > 0 and event_que[0].get('status', '') != 'standby':
+        elif len(event_que) > 0 and event_que[0].get('status', {}) != 'standby':
             new_event = event_que.pop(0)
         else:
             map_level = self.new_journey.get('map_level', self.get_journey_detail(['map_level'])['map_level'])

@@ -9,3 +9,5 @@ class AvatarForm(forms.Form):
     comment = forms.CharField(label="备注", max_length=128)
 
 
+
+

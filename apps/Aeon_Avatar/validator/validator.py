@@ -7,8 +7,8 @@ def init_avatar(attr):
         if int(attr[key]) >= 0:
             total += int(attr[key])
         else:
-            return False
+            return -1
     if total <= avatar_config.init_point:
-        return True
+        return int(avatar_config.init_point) - total
     else:
-        return False
+        return -1

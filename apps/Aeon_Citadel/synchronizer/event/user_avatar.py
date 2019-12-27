@@ -1,4 +1,5 @@
 from .avatar import Avatar
+from Aeon_Global import avatar_config
 
 
 class UserAvatar(Avatar):
@@ -13,15 +14,16 @@ class UserAvatar(Avatar):
         exp = int(self.avatar.get('exp', 0))
         bound = get_level_json(self.avatar['lv'])
         if exp >= bound:
+            self.level_up()
             self.avatar['exp'] = exp - bound
-            self.avatar['lv'] = int(self.avatar.get('lv', 1) + 1)
             self.check_level_up()
         else:
             self.avatar['exp'] = exp
 
+    def level_up(self):
+        self.avatar['lv'] = int(self.avatar.get('lv', 1) + 1)
+        self.avatar['skill_points'] = self.avatar.get('skill_points', 0) + 1
+
 
 def get_level_json(lv):
-    json = {
-        1: 100, 2: 200, 3: 300, 4: 400, 5: 500, 6: 600, 7: 700
-    }
-    return json[lv]
+    return avatar_config.level_bound.get(lv, 9999999)

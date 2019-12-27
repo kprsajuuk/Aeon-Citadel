@@ -6,7 +6,7 @@ from .user_avatar import UserAvatar
 class OptionHandler:
     def __init__(self, event, avatar):
         self.event = event
-        self.options = event.get('result', {})
+        self.options = event.get('results', {})
         self.avatar = avatar
 
     def handle_event(self, avatar_act):

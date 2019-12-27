@@ -8,3 +8,8 @@ class ActionForm(forms.Form):
 
 class EventForm(forms.Form):
     message = forms.CharField(label="描述", max_length=128)
+
+
+class UpgradeForm(forms.Form):
+    type = forms.CharField(label="类型", max_length=128)
+    num = forms.IntegerField(label="数量")

@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .synchronizer.eventAction import ActionHandler
+from .synchronizer.upgradeHandler import upgrade_avatar
+from . import forms
 
 
 @csrf_exempt
@@ -17,6 +19,24 @@ def execute_action(request):
         else:
             return JsonResponse({"success": True, "msg": "", "data": data})
 
+    return JsonResponse({"success": False, "msg": "error"})
+
+
+@csrf_exempt
+def upgrade_status(request):
+    if request.method == 'POST':
+        avatar_id = request.session.get('selectChar', None)
+        if not avatar_id:
+            return JsonResponse({"success": False, "msg": "avatar error"})
+        upgrade_form = forms.UpgradeForm(request.POST)
+        if upgrade_form.is_valid():
+            upgrade_type = upgrade_form.cleaned_data['type']
+            upgrade_num = upgrade_form.cleaned_data['num']
+            avatar = upgrade_avatar(avatar_id, upgrade_type, upgrade_num)
+            if not avatar:
+                return JsonResponse({"success": False, "msg": "update fail"})
+            else:
+                return JsonResponse({"success": True, "hero": avatar, "msg": "update success"})
     return JsonResponse({"success": False, "msg": "error"})
 
 

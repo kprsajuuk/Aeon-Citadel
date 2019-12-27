@@ -5,7 +5,7 @@ class Journey(models.Model):
     avatar_id = models.CharField(max_length=128, primary_key=True, default='0')
     avatar_name = models.CharField(max_length=128)
     avatar_status = models.CharField(max_length=128, default='{}')
-    event_current = models.CharField(max_length=1024, default='')
+    event_current = models.CharField(max_length=1024, default='{}')
     event_queue = models.CharField(max_length=1024, default="[]")
     map_level = models.TextField(default='[]')
     map_user = models.TextField(default='[]')

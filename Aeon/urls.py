@@ -25,8 +25,10 @@ urlpatterns = [
     path('logout/', account.logout),
     path('register/', account.register),
     path('createHero/', avatar.create_avatar),
+    path('deleteHero/', avatar.delete_avatar),
     path('loadAllHero/', avatar.load_all_avatars),
     path('selectHero/', avatar.select_hero),
+    path('upgrade/', citadel.upgrade_status),
     path('takeAction/', citadel.execute_action),
 
     path('test/', citadel.test_func),

@@ -4,7 +4,6 @@ class Avatar:
         self.avatar = avatar
 
     def before_action(self):
-        print(self.action)
         if self.action == 'attack':
             self.before_attack()
         elif self.action == 'dodge':
@@ -13,7 +12,6 @@ class Avatar:
             self.before_charge()
 
     def execute_action(self, enemy):
-        print(self.action)
         if self.action == 'attack':
             self.execute_attack(enemy)
         elif self.action == 'dodge':
@@ -37,6 +35,7 @@ class Avatar:
         crg = int(self.avatar.get('charge', 0))
         return (atk + crg) * (crg + 1)
 
+    # 攻击行动的三个步骤
     def before_attack(self):
         self.avatar['description'] = self.avatar['name'] + "使用了攻击"
 
@@ -46,8 +45,9 @@ class Avatar:
 
     def after_attack(self):
         self.avatar['charge'] = 0
-        self.avatar['stamina'] = min(int(self.avatar.get('stamina', 0)) + 1, int(self.avatar.get('max_stamina', 2)))
+        self.avatar['stamina'] = min(int(self.avatar.get('stamina', 0)) + 1, int(self.avatar.get('max_stamina', 0)))
 
+    # 闪避行动的三个步骤
     def before_dodge(self):
         sta = int(self.avatar.get('stamina', 0))
         self.avatar['description'] = self.avatar['name'] + "使用了闪避"
@@ -61,6 +61,7 @@ class Avatar:
     def after_dodge(self):
         self.avatar['stamina'] = max(int(self.avatar.get('stamina', 0)) - 1, 0)
 
+    # 蓄力行动的三个步骤
     def before_charge(self):
         self.avatar['charge'] = int(self.avatar.get('charge', 0)) + 1
         self.avatar['description'] = self.avatar['name'] + "使用了蓄力"
@@ -69,8 +70,9 @@ class Avatar:
         pass
 
     def after_charge(self):
-        self.avatar['stamina'] = min(int(self.avatar.get('stamina', 0)) + 1, 2)
+        self.avatar['stamina'] = min(int(self.avatar.get('stamina', 0)) + 1, int(self.avatar.get('max_stamina', 0)))
 
+    # 被影响的函数
     def take_attack(self, dmg):
         if self.action != 'dodge':
             dmg = max(dmg - self.cal_damage(), 0) if self.action == 'attack' else dmg
@@ -78,7 +80,7 @@ class Avatar:
 
         if int(self.avatar['hp']) <= 0:
             self.avatar['hp'] = 0
-            self.avatar['dead'] = True
+            self.avatar['status'] = 'death'
 
     def take_damage(self, dmg):
         self.avatar['hp'] = int(self.avatar['hp']) - int(dmg)

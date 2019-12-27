@@ -1,7 +1,9 @@
 def sync_check(event, action):
+    event_type = event.get('type', '')
     if action == 'requestLatest':
         return True
-    event_type = event.get('type', '')
+    if event_type == 'pass':
+        return True
     legal_actions = set([])
     # if event is None or event == '' or event_type == 'default':
     if event_type == 'start':
@@ -9,7 +11,7 @@ def sync_check(event, action):
     elif event_type == 'move':
         legal_actions = set(['t', 'r', 'b', 'l', 'act'])
     elif event_type == 'enemy':
-        legal_actions = set(['attack', 'dodge', 'charge'])
+        legal_actions = set(['attack', 'dodge', 'charge', 'endBattle'])
     elif event_type == 'message':
         legal_actions = set(['confirm'])
     elif event_type == 'option':
