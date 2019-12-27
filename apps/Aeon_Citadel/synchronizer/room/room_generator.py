@@ -160,7 +160,7 @@ def random_effect(dif):
     rand = random.randint(0, 0)
     if rand == 0:
         number = random.randint(1, 5 * dif)
-        return {"name": "damage", "point": number + 100, "msg": "受到" + str(number) + "点伤害"}
+        return {"name": "damage", "point": number, "msg": "受到" + str(number) + "点伤害"}
     elif rand == 1:
         number = random.randint(3, 5 * dif)
         return {"name": "heal", "point": number, "msg": "恢复了" + str(number) + "点生命值"}
